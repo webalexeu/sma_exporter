@@ -13,6 +13,16 @@ if ENV['SMA_ADDRESS']
 	File.binwrite(config, data)
 end
 
+if ENV['SMA_PASSWORD']
+	config = File.join(
+		File.dirname(ENV.fetch('SMA_SBFPATH')),
+		'SBFspot.cfg'
+	)
+	data = File.binread(config)
+	data[/Password=(.+)$/, 1] = ENV['SMA_PASSWORD']
+	File.binwrite(config, data)
+end
+
 use Rack::Deflater, if: ->(_, _, _, body) { body.any? && body[0].length > 512 }
 use SmaExporter::Rack
 use Prometheus::Middleware::Collector
